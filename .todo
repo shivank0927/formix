@@ -1,0 +1,6 @@
+[ ] - Integrating gemini api maybe?
+[ ] - formatting user input well enough.
+[ ] - for different files there are different number of directories as well as different number of files within them + name is different + extension is diff.
+[ ] - maybe implement multiple layers to validate the input and analyze the architecture provide?
+
+a person can either describe a project or she/he can either give the architecture name.
