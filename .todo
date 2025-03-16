@@ -4,3 +4,10 @@
 [ ] - maybe implement multiple layers to validate the input and analyze the architecture provide?
 
 a person can either describe a project or she/he can either give the architecture name.
+argparse for command description + error handling.
+
+
+
+Error handlings" 
+    what if user enters stupid prompt
+    what if user tries to create project in dir that already has files.

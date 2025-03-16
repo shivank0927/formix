@@ -1,9 +1,8 @@
 import os
 import sys
-# from args import Fetcher # args pos argument.
 from google import genai
 
-def integration(lang, arch):
+def integration(language, architecture):
     client = genai.Client(api_key=os.getenv("Api_Key"))
 
     PROMPT_PATH = os.path.abspath("prompts/prompt.txt")
@@ -11,7 +10,7 @@ def integration(lang, arch):
 
     with open(PROMPT_PATH, "r") as prompt:
         content = prompt.read()
-    content = content.replace("{language}", lang).replace("{architecture}", arch)
+    content = content.replace("{language}", language).replace("{architecture}", architecture)
     if content:
         print("creating response...")
     else:
