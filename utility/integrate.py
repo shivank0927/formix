@@ -9,11 +9,16 @@ def integration(language, architecture):
     print(PROMPT_PATH)
 
     with open(PROMPT_PATH, "r") as prompt:
+        
         content = prompt.read()
     content = content.replace("{language}", language).replace("{architecture}", architecture)
+    
     if content:
+        
         print("creating response...")
+        
     else:
+        
         sys.exit("integrate file error")
 
     response = client.models.generate_content(

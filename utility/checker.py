@@ -1,3 +1,5 @@
+import re
+
 LANGUAGES = {
     "lua", "html", "css", "java", "python", "javascript", "c", "cpp", "rust", "go",
     "php", "ruby", "swift", "kotlin", "typescript", "dart", "r", "perl", "shell",
@@ -8,5 +10,10 @@ LANGUAGES = {
 }
 
 def verify(language: str) -> bool: # method for verifying if language is valid
-  
-    return language.lower() in LANGUAGES
+  language = language.lower()
+  # re.search("")
+  return language in LANGUAGES
+
+
+if __name__ == "__main__":
+  verify()
