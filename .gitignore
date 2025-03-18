@@ -2,7 +2,12 @@
 __pycache__/
 *.py[cod]
 *$py.class
+
+# Files
 myenv
+config.json
+prompts
+
 # C extensions
 *.so
 

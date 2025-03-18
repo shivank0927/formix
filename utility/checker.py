@@ -10,6 +10,7 @@ LANGUAGES = {
 }
 
 def verify(language: str) -> bool: # method for verifying if language is valid
+  
   language = language.lower()
   # re.search("")
   return language in LANGUAGES

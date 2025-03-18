@@ -1,60 +1,98 @@
-import sys, os , argparse, json
-from utility.integrate import integration 
+import sys, os, argparse, json
+from utility.integrate import integration
 from utility.checker import verify
-# to be made func. later
 
-parser = argparse.ArgumentParser()
+config = "config.json"
 
-parser.add_argument(
-    "language",
-    help="Name of the programming languages you want to create, separated by ','.\n"
-         "Example: For web development: HTML, CSS, JS"
-)
-
-parser.add_argument(
-    "architecture",
-    help="Structure of your project. Enter them in string \n"
-         "You can also provide a project description, as it's integrated with the Gemini API."
-)
-
-args = parser.parse_args()
-
-lang = args.language
-arch = args.architecture
-
-os.mkdir("tests")
-
-if not verify(language=lang):
-    sys.exit("language does not exit/ incorrect language")
+def command():
     
-response  = integration(language=lang, architecture=arch)
-response = json.loads(response)
+    parser = argparse.ArgumentParser()
 
-for i in response.keys():
+    parser.add_argument("language", nargs="?", help="name of the programming language.")
+    parser.add_argument("architecture", nargs="?", help="project structure description.")
+    parser.add_argument("directory", nargs="?", help="directory name for the project.")
+    parser.add_argument("--add-key", help="add your Gemini API key to use the tool.")
 
-    if not i:
-        sys.exit("error")
+    return parser.parse_args()
+
+def setup(lang, arch, direc):
+    try:
         
-    print(i)
+        key = loadKey()
+        if not key:
+             sys.exit("No api key found.")
+             
+        os.mkdir(direc)
 
-for key in response.keys():
+        if not verify(language=lang):
+            sys.exit("language does not exist/incorrect language")
+            
+        response = integration(language=lang, architecture=arch, api_key=key)
+
+        try:
+            response = json.loads(response)
+        except json.JSONDecodeError:
+            sys.exit("error in response format.")
+
+        if not response:
+            sys.exit("error")
+
+        return response
     
-    if key == "LICENSE" or key == "README.md": 
-        with open(f"tests/{key}", "w") as file: # remove tests/ later
-            pass 
-        
-    else:
-        print(response.get(key), "\n")
-        dir_file = response.get(f"{key}") 
-        
-        os.mkdir(f"tests/{key}")  # rm tests/ later.
+    except Exception as e:
+        sys.exit(f"{e}")
 
-        if not dir_file:
-            pass
+def create(direc, response):
+    try:
         
-        else:
-            for i in dir_file:
-                print(f"i is : {i}", "\n")
+        for key, value in response.items():
+            path = f"{direc}/{key}"
+
+            if key in {"LICENSE", "README.md"}:
+                with open(path, "w") as file:
+                    pass  
                 
-                with open(f"tests/{key}/{i}", "w") as file: # fix?
-                    pass
+            else:
+                os.makedirs(path, exist_ok=True)
+                
+                if value:
+                    for file_name in value:
+                        with open(f"{path}/{file_name}", "w") as file:
+                            pass  
+
+    except Exception as e:
+        sys.exit(f"{e}")
+
+def saveKey(api_key):
+    try:
+        
+        with open(config, "w") as file:
+            json.dump({"api_key": api_key}, file)
+            
+    except Exception as e:
+        sys.exit(f"error in api key saving\n{e}")
+
+def loadKey():
+    try:
+        
+        if os.path.exists(config):
+            with open(config, "r") as file:
+                data = json.load(file)
+                return data.get("api_key")
+        return None
+    
+    except Exception as e:
+        sys.exit(f"error in key loading\n{e}")
+
+if __name__ == "__main__":
+    argus = command()
+
+    if argus.add_key:
+        saveKey(argus.add_key)
+        sys.exit(0)
+    lang = argus.language or "lua"
+    arch = argus.architecture or "default"
+    dire = argus.directory or "project"
+
+    response = setup(lang, arch, dire)
+    create(dire, response)

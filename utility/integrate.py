@@ -2,29 +2,33 @@ import os
 import sys
 from google import genai
 
-def integration(language, architecture):
-    client = genai.Client(api_key=os.getenv("Api_Key"))
+def integration(language, architecture, api_key):
+    try:
+        client = genai.Client(api_key=api_key)
 
-    PROMPT_PATH = os.path.abspath("prompts/prompt.txt")
-    print(PROMPT_PATH)
+        PROMPT_PATH = os.path.abspath("prompts/prompt.txt")
+        print(PROMPT_PATH)
 
-    with open(PROMPT_PATH, "r") as prompt:
+        with open(PROMPT_PATH, "r") as prompt:
+            content = prompt.read()
+
+        content = content.replace("{language}", language).replace("{architecture}", architecture)
         
-        content = prompt.read()
-    content = content.replace("{language}", language).replace("{architecture}", architecture)
-    
-    if content:
-        
+        if not content:
+            sys.exit("integrate file error")
+
         print("creating response...")
-        
-    else:
-        
-        sys.exit("integrate file error")
 
-    response = client.models.generate_content(
-        model="gemini-2.0-flash", contents=content
-    )
-    return response.text
+        response = client.models.generate_content(
+            model="gemini-2.0-flash", contents=[{"text": content}]
+        )
+        
+        print (response.text)
+        
+        return response.text if response else None
+    
+    except Exception as e:
+        sys.exit(f"{e}")
 
-if __name__=="__main__":
-    integration()
+if __name__ == "__main__":
+    sys.exit("")
